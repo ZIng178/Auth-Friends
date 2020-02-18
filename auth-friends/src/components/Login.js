@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import {axiosWithAuth} from "./AxiosWithAuth";
 
-function LogIn() {
+const LogIn = props=> {
   const [credentials, setCredentials] = useState({
     username: "",
     password: ""
@@ -12,7 +13,16 @@ function LogIn() {
 
   const handleSubmit = e => {
     e.preventDefault();
-    console.log("submitting");
+     console.log("submitting");
+    axiosWithAuth()
+    .post(`http://localhost:5000/api/login`, credentials)
+    .then(res=>{
+      console.log("This is the response from the server:",res)
+      localStorage.setItem("token",res.data.payload)
+      console.log("LogIn props:",props)
+      props.history.push("/protected")
+    })
+    .catch(err=> console.log("invalid login", err))
   };
 
   return (
@@ -34,7 +44,7 @@ function LogIn() {
           value={credentials.password}
         />
      
-      <button type="submit">Submit</button>
+      <button onClick ={handleSubmit}>Submit</button>
       </form>
     </div>
   );
